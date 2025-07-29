@@ -1,3 +1,4 @@
+const bcrypt = require('bcrypt');
 const User = require('../models/User');
 
 const getUserById = async (id) => {
@@ -9,6 +10,7 @@ const getUserByEmail = async (email) => {
 };
 
 const createUser = async (data) => {
+  // Password will be hashed in the model via pre-save middleware
   const user = new User(data);
   return await user.save();
 };

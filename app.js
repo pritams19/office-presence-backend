@@ -12,12 +12,14 @@ app.get('/', (req, res) => res.send('Office Presence API is running'));
 // Public routes
 app.use('/api/auth', require('./routes/auth.routes'));
 
-// Protect all /api routes
-app.use('/api', verifyToken);
+// Selectively protect /api/users (allow POST without token)
+app.use('/api/users', (req, res, next) => {
+  if (req.method === 'POST') return next();
+  verifyToken(req, res, next);
+}, require('./routes/user.routes'));
 
-// Protected routes
-app.use('/api/users', require('./routes/user.routes'));
-app.use('/api/presence', require('./routes/presence.routes'));
+// Fully protect /api/presence
+app.use('/api/presence', verifyToken, require('./routes/presence.routes'));
 
 // Global error handler middleware (to be added later)
 // app.use(errorHandler);
